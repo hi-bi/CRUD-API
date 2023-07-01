@@ -1,0 +1,26 @@
+{
+  "name": "crud-api",
+  "version": "1.0.0",
+  "description": "Implementation of simle CRUD API",
+  "main": "server.js",
+  "type":"module",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hi-bi/CRUD-API.git"
+  },
+  "keywords": [
+    "crud",
+    "api",
+    "nodejs"
+  ],
+  "author": "hi-bi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hi-bi/CRUD-API/issues"
+  },
+  "homepage": "https://github.com/hi-bi/CRUD-API#readme"
+}
