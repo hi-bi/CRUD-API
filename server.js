@@ -1,6 +1,6 @@
 import { Server } from 'http';
 import 'dotenv/config';
-import {users} from './src/user.js'
+import { apiUsers, newUser, users} from './src/user.js'
 
 const nonExistingResource = "The requested resource does not respond."; 
 
@@ -12,39 +12,74 @@ const server = new Server();
 const requestListener = function (req, res) {
 
   try {
-    res.setHeader('Content-Type', 'text/html');
 
-    switch (req.method) {
-      case ('GET'):
-        switch (req.url) {
-          case '/':
-            res.writeHead(200);
-            res.end('Hello!');
-            break;
+//    console.log(req.method, req.url);
+    if (req.url == apiUsers) {
+      switch (req.method) {
+        case 'GET':
 
-          case '/api/users':
-            res.writeHead(200);
-            res.end(JSON.stringify(users));
-            break;
-      
-            default:
-              res.writeHead(404);
-              res.end(nonExistingResource);
-            break;
-        }
+          res.setHeader('Content-Type', 'text/html');
+          res.statusCode = 200;
+          res.end(JSON.stringify(users));
         
-        break;
-    
-      default:
-        res.writeHead(404);
-        res.end(nonExistingResource);
-      break;
+          break;
+      
+        case 'POST':
+
+          let body =  [];
+          req.on('data', (chunk) => {
+            body.push(chunk);
+          })
+          .on('end', () => {
+            body = Buffer.concat(body).toString();
+            const userData = JSON.parse(body);
+
+            if (userData) {
+          
+              const result = newUser(userData);
+
+              res.setHeader('Content-Type', 'text/html');
+              res.statusCode = 201;
+              res.end(JSON.stringify(result));
+
+            } else {
+
+              res.setHeader('Content-Type', 'text/html');
+              res.statusCode = 404;
+              res.end('No user data available');
+
+            }
+          })
+        
+          break;
+
+        default:
+          console.error('nonExistingResource');
+          
+          res.setHeader('Content-Type', 'text/html');
+          res.statusCode = 404;
+          res.end(nonExistingResource);
+          
+          break;
+      }
+
+    } else {
+      console.error('nonExistingResource');
+
+      res.setHeader('Content-Type', 'text/html');
+      res.statusCode = 404;
+      res.end(nonExistingResource);
+
     }
-  
-    
+      
   } catch (error) {
-    console.error('');    
-  }
+    
+    console.error(error.stack);    
+    
+    res.setHeader('Content-Type', 'text/html');
+    res.statusCode = 404;
+    res.end('Request processing error');
+}
   
 };
 
@@ -55,4 +90,3 @@ server.on('listening', () => {
 });
  
 server.listen(port);
-
