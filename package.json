@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "Implementation of simle CRUD API",
   "main": "server.js",
-  "type":"module",
+  "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "start": "node ./dist/server.js",
+    "build": "webpack --config webpack.config.js --mode=production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,5 +23,20 @@
   "bugs": {
     "url": "https://github.com/hi-bi/CRUD-API/issues"
   },
-  "homepage": "https://github.com/hi-bi/CRUD-API#readme"
+  "homepage": "https://github.com/hi-bi/CRUD-API#readme",
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "@webpack-cli/generators": "^3.0.7",
+    "babel-loader": "^9.1.2",
+    "css-loader": "^6.8.1",
+    "mini-css-extract-plugin": "^2.7.6",
+    "prettier": "^2.8.8",
+    "style-loader": "^3.3.3",
+    "webpack": "^5.88.1",
+    "webpack-cli": "^5.1.4"
+  }
 }

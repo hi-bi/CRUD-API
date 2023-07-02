@@ -1,7 +1,8 @@
 import { Server } from 'http';
+import 'dotenv/config';
 
 const hostname = '127.0.0.1';
-const port = 3000;
+const port = process.env.SERVER_PORT;
 
 const server = new Server();
  
