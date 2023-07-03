@@ -1,6 +1,6 @@
 import { Server } from 'http';
 import 'dotenv/config';
-import { apiUsers, checkUserData, getApiUsersUUID, getUser, newUser, putUser, users} from './src/user.js'
+import { apiUsers, checkUserData, deleteUser, getApiUsersUUID, getUser, newUser, putUser, users} from './src/user.js'
 
 const nonExistingResource = "The requested resource does not respond."; 
 
@@ -181,10 +181,23 @@ const requestListener = function (req, res) {
           break;
   
         case 'DELETE':
+          const result = deleteUser(uuidUser);
+          if (result) {
+            console.log('Record is found and deleted');
+
+            res.setHeader('Content-Type', 'text/html');
+            res.statusCode = 204;
+            res.end('Record is found and deleted');
+
+          } else {
+            console.log(`User with id === ${uuidUser} doesn't exist`);
+
+            res.setHeader('Content-Type', 'text/html');
+            res.statusCode = 404;
+            res.end(`User with id === ${uuidUser} doesn't exist`);
+          }
         
-          console.log(req.method);  
           break;
-  
       }
 
       return;

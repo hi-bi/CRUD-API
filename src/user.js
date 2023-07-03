@@ -7,6 +7,20 @@ const newUserUUID = function () {
     return randomUUID();
 };
 
+export const deleteUser = function (uuid) {
+
+    const deletedUser = users.find(item => item.uuid = uuid);
+
+    if (deletedUser) {
+        users.splice(deletedUser, 1);
+
+        return true;
+    } else {
+        return false;
+    }
+};  
+
+
 export const putUser = function (uuid, user) {
 
     const updatedUser = users.find(item => item.uuid = uuid);
