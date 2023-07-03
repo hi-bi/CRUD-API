@@ -7,22 +7,34 @@ const newUserUUID = function () {
     return randomUUID();
 };
 
-export const newUser = function (user) {
-    const check = checkUserData(user);
+export const putUser = function (user) {
+    const updatedUser = users.find(item => item.id = user.uuid);
 
-    if (Object.keys(check).length == 0) {
-        
-        user.uuid = newUserUUID();
-        users.push(user);
+    if (updatedUser) {
 
-        return user;
-    } else {
-        return check;
+
     }
+
+    return result;
+};  
+
+
+export const getUser = function (uuid) {
+    const result = users.filter(item => item.id = uuid);
+
+    return result;
+};
+
+export const newUser = function (user) {
+        
+    user.uuid = newUserUUID();
+    users.push(user);
+
+    return user;
 
 };
 
-function checkUserData (user) {
+export function checkUserData (user) {
     
     let check = {};
 
@@ -69,9 +81,9 @@ function checkUserData (user) {
     return check;
 }
 
-const getApiUsersUUID = function (url) {
+export const getApiUsersUUID = function (url) {
 
-    uuid = url.replace(apiUsers+'/', '');
+    const uuid = url.replace(apiUsers+'/', '');
     if (isUUD(uuid)) {
         return uuid;
     } else {
@@ -83,7 +95,7 @@ const getApiUsersUUID = function (url) {
 const isUUD = function (arg) {
 
     const checkUUID = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
-    result = checkUUID.test(arg);
+    const result = checkUUID.test(arg);
 
     return result;
 };

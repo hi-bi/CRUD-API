@@ -1,6 +1,6 @@
 import { Server } from 'http';
 import 'dotenv/config';
-import { apiUsers, newUser, users} from './src/user.js'
+import { apiUsers, checkUserData, getApiUsersUUID, getUser, newUser, users} from './src/user.js'
 
 const nonExistingResource = "The requested resource does not respond."; 
 
@@ -12,6 +12,7 @@ const server = new Server();
 const requestListener = function (req, res) {
 
   try {
+
 
 //    console.log(req.method, req.url);
     if (req.url == apiUsers) {
@@ -35,17 +36,30 @@ const requestListener = function (req, res) {
             const userData = JSON.parse(body);
 
             if (userData) {
-          
-              const result = newUser(userData);
 
-              res.setHeader('Content-Type', 'text/html');
-              res.statusCode = 201;
-              res.end(JSON.stringify(result));
+              const check = checkUserData(userData);
 
+              if (Object.keys(check).length == 0) {
+                  
+                const result = newUser(userData);
+                
+                console.log(JSON.stringify(result));
+
+                res.setHeader('Content-Type', 'text/html');
+                res.statusCode = 201;
+                res.end(JSON.stringify(result));
+              } else {
+                console.log(JSON.stringify(check));
+
+                res.setHeader('Content-Type', 'text/html');
+                res.statusCode = 400;
+                res.end(JSON.stringify(check));
+              }
             } else {
+              console.log('No user data available');
 
               res.setHeader('Content-Type', 'text/html');
-              res.statusCode = 404;
+              res.statusCode = 400;
               res.end('No user data available');
 
             }
@@ -63,14 +77,79 @@ const requestListener = function (req, res) {
           break;
       }
 
-    } else {
-      console.error('nonExistingResource');
+      return;
+    } 
+      
 
-      res.setHeader('Content-Type', 'text/html');
-      res.statusCode = 404;
-      res.end(nonExistingResource);
+    const urlArray = req.url.split('/');
+    //!!!!!!
+    console.log(urlArray);
+    let uuidUser = '';
 
+    if (urlArray.length === 4) {
+      uuidUser = getApiUsersUUID(req.url)
     }
+
+    if (urlArray.length === 4 && uuidUser === '' && urlArray[1] === 'api' && urlArray[2] === 'users') {
+      if (req.method === 'GET' || req.method === 'PUT' || req.method === 'DELETE') {
+        const errorMessage = 'userId is invalid (not uuid)!';
+        console.error(errorMessage);
+  
+        res.setHeader('Content-Type', 'text/html');
+        res.statusCode = 404;
+        res.end(errorMessage);
+  
+        return;
+ 
+      }
+    }
+
+    if ((uuidUser != '' && urlArray[1] === 'api' && urlArray[2] === 'users') 
+      && (req.method === 'GET' || req.method === 'PUT' || req.method === 'DELETE')) {
+
+      switch (req.method) {
+        case 'GET':
+          const getResult = getUser(uuidUser);
+          if (getResult.length > 0) {
+
+            console.log(JSON.stringify(getResult[0]));
+
+            res.setHeader('Content-Type', 'text/html');
+            res.statusCode = 200;
+            res.end(JSON.stringify(getResult[0]));
+  
+          } else {
+            console.log(`User with id === ${uuid} doesn't exist`);
+
+            res.setHeader('Content-Type', 'text/html');
+            res.statusCode = 200;
+            res.end(`User with id === ${uuid} doesn't exist`);
+          }
+          
+          break;
+      
+        case 'PUT':
+        
+          console.log(req.method);  
+          break;
+  
+        case 'DELETE':
+        
+          console.log(req.method);  
+          break;
+  
+      }
+
+      return;
+    }
+
+
+    console.error('nonExistingResource');
+
+    res.setHeader('Content-Type', 'text/html');
+    res.statusCode = 404;
+    res.end(nonExistingResource);
+
       
   } catch (error) {
     
