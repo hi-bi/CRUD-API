@@ -7,15 +7,17 @@ const newUserUUID = function () {
     return randomUUID();
 };
 
-export const putUser = function (user) {
-    const updatedUser = users.find(item => item.id = user.uuid);
+export const putUser = function (uuid, user) {
+
+    const updatedUser = users.find(item => item.uuid = uuid);
 
     if (updatedUser) {
-
-
+        updatedUser.username = user.username;
+        updatedUser.age = user.age;
+        updatedUser.hobbies = user.hobbies;
     }
 
-    return result;
+    return updatedUser;
 };  
 
 
@@ -26,7 +28,7 @@ export const getUser = function (uuid) {
 };
 
 export const newUser = function (user) {
-        
+
     user.uuid = newUserUUID();
     users.push(user);
 

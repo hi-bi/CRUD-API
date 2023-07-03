@@ -1,6 +1,6 @@
 import { Server } from 'http';
 import 'dotenv/config';
-import { apiUsers, checkUserData, getApiUsersUUID, getUser, newUser, users} from './src/user.js'
+import { apiUsers, checkUserData, getApiUsersUUID, getUser, newUser, putUser, users} from './src/user.js'
 
 const nonExistingResource = "The requested resource does not respond."; 
 
@@ -119,18 +119,65 @@ const requestListener = function (req, res) {
             res.end(JSON.stringify(getResult[0]));
   
           } else {
-            console.log(`User with id === ${uuid} doesn't exist`);
+            console.log(`User with id === ${uuidUser} doesn't exist`);
 
             res.setHeader('Content-Type', 'text/html');
-            res.statusCode = 200;
-            res.end(`User with id === ${uuid} doesn't exist`);
+            res.statusCode = 404;
+            res.end(`User with id === ${uuidUser} doesn't exist`);
           }
           
           break;
       
         case 'PUT':
+
+          let body =  [];
+          req.on('data', (chunk) => {
+            body.push(chunk);
+          })
+          .on('end', () => {
+            body = Buffer.concat(body).toString();
+            const userData = JSON.parse(body);
+
+            if (userData) {
+
+              const check = checkUserData(userData);
+
+              if (Object.keys(check).length == 0) {
+
+                const updatedUser = putUser(uuidUser, userData);
+
+                if (updatedUser) {
+                  console.log(JSON.stringify(updatedUser));
+
+                  res.setHeader('Content-Type', 'text/html');
+                  res.statusCode = 200;
+                  res.end(JSON.stringify(updatedUser));
+  
+                } else {
+                  console.log(`User with id === ${uuidUser} doesn't exist`);
+
+                  res.setHeader('Content-Type', 'text/html');
+                  res.statusCode = 404;
+                  res.end(`User with id === ${uuidUser} doesn't exist`);
+           
+                }
+              } else {
+                console.log(JSON.stringify(check));
+
+                res.setHeader('Content-Type', 'text/html');
+                res.statusCode = 400;
+                res.end(JSON.stringify(check));
+              }
+            } else {
+              console.log('No user data available');
+
+              res.setHeader('Content-Type', 'text/html');
+              res.statusCode = 400;
+              res.end('No user data available');
+
+            }
+          })
         
-          console.log(req.method);  
           break;
   
         case 'DELETE':
