@@ -1,4 +1,4 @@
-import { Server } from 'http';
+import { createServer, Server } from 'http';
 import 'dotenv/config';
 import { apiUsers, checkUserData, deleteUser, getApiUsersUUID, getUser, newUser, putUser, users} from './src/user.js'
 
@@ -9,12 +9,12 @@ const port = process.env.SERVER_PORT;
 
 const server = new Server();
  
-const requestListener = function (req, res) {
+const requestListener = function (req, res,z) {
 
   try {
 
 
-//    console.log(req.method, req.url);
+    console.log(req.method, req.url);
     if (req.url == apiUsers) {
       switch (req.method) {
         case 'GET':
@@ -34,7 +34,7 @@ const requestListener = function (req, res) {
           .on('end', () => {
             body = Buffer.concat(body).toString();
             const userData = JSON.parse(body);
-
+            console.log(userData);
             if (userData) {
 
               const check = checkUserData(userData);
@@ -79,11 +79,8 @@ const requestListener = function (req, res) {
 
       return;
     } 
-      
 
     const urlArray = req.url.split('/');
-    //!!!!!!
-    console.log(urlArray);
     let uuidUser = '';
 
     if (urlArray.length === 4) {
@@ -100,7 +97,7 @@ const requestListener = function (req, res) {
         res.end(errorMessage);
   
         return;
- 
+
       }
     }
 
@@ -159,7 +156,7 @@ const requestListener = function (req, res) {
                   res.setHeader('Content-Type', 'text/html');
                   res.statusCode = 404;
                   res.end(`User with id === ${uuidUser} doesn't exist`);
-           
+          
                 }
               } else {
                 console.log(JSON.stringify(check));
@@ -203,7 +200,6 @@ const requestListener = function (req, res) {
       return;
     }
 
-
     console.error('nonExistingResource');
 
     res.setHeader('Content-Type', 'text/html');
@@ -218,14 +214,14 @@ const requestListener = function (req, res) {
     res.setHeader('Content-Type', 'text/html');
     res.statusCode = 404;
     res.end('Request processing error');
-}
+  }
   
 };
 
 server.on('request', requestListener);
 
 server.on('listening', () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+  console.log(`DB server running at http://${hostname}:${port}/`);
 });
- 
+
 server.listen(port);
